@@ -1,0 +1,40 @@
+<div class="container">
+    <h3>Your Peer ID {{ peerId }}</h3>
+    <ng-container *ngIf="!isConnected">
+      <input
+        class="peer-id"
+        type="text"
+        [(ngModel)]="anotherPeerId"
+        [value]="anotherPeerId"
+        placeholder="Your Peer ID"
+      />
+      <button class="connect-button" (click)="onCreateServer()">Join Call</button>
+    </ng-container>
+  
+    <ng-container *ngIf="isConnected">
+      <h4>Peer connected with {{ anotherPeerId }}</h4>
+    </ng-container>
+  
+    <video
+      #localVideo
+      id="local-video"
+      autoplay
+      playsinline
+      [muted]="true"
+    ></video>
+    <video #remoteVideo id="remote-video" autoplay playsinline></video>
+  
+    <div *ngIf="isCalling" class="incoming-call">
+      <div>Incoming Call</div>
+      <button (click)="onAcceptCall()">Accept Call</button>
+    </div>
+  
+    <div class="actions" *ngIf="isConnected && !isCalling">
+      <button class="call-button" (click)="onCall()" *ngIf="isShowCall">
+        Make Call
+      </button>
+      <button class="hangup-button" (click)="onHangUp()" *ngIf="isShowCancel">
+        Hang Up
+      </button>
+    </div>
+  </div>

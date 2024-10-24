@@ -1,0 +1,43 @@
+<div class="chat-container">
+  <div class="channel-info">
+    <h3>{{ channelName }}</h3>
+    <span>{{ participantsCount }} participants</span>
+    <div>
+      <!-- <button (click)="goToVideo()" class="action-button" placement="bottom" ngbTooltip="Video Call">
+        <img src="assets/video-call.svg">
+      </button> -->
+      <button (click)="leaveChannel()" class="action-button leave-button" placement="bottom" ngbTooltip="Leave Channel">
+        <img src="assets/leave.svg">
+      </button>
+    </div>
+  </div>
+
+  <div class="messages-container">
+    <div *ngFor="let message of messages" class="message" [ngClass]="{ 'mine': message.sender._id == user._id }">
+      <div class="message-header">
+        <img *ngIf="message.sender._id !== user._id" [src]="message.sender.avatar ? baseUrl+message.sender.avatar : 'assets/user.jpeg'" alt="avatar" class="avatar">
+        <span class="username">{{ message.sender._id == user._id ? 'You' : message.sender.username }}</span>
+      </div>
+      <div class="message-text">
+        <ng-container *ngIf="message.type == 'text'">
+          {{ message.text }}
+        </ng-container>
+        <ng-container *ngIf="message.type == 'image'">
+          <img class="message-image" [src]="message.text">
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <div class="message-input-container">
+    <div class="input-wrapper">
+      <input [formControl]="newMessage" type="text" placeholder="Type your message..." class="message-input" />
+      <img class="upload-img" src="assets/attachment.svg" (click)="fileInput.click()">
+    </div>
+    <!-- <button (click)="fileInput.click()" class="upload-button">Upload Image</button> -->
+    <button (click)="sendMessage()" class="send-button">Send</button>
+  </div>
+</div>
+
+<input type="file" accept="image/*" (change)="onFileSelected($event)" style="display:none;" #fileInput />
+

@@ -1,0 +1,62 @@
+<div class="card my-5">
+  <h3 class="card-header">Login</h3>
+  <div class="card-body py-5">
+    <!-- @if(errorMessage){
+    <div class="alert alert-danger">
+      <h6>{{ errorMessage }}</h6>
+    </div>
+    } -->
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          formControlName="username"
+          class="form-control"
+        />
+        @if (loginForm.get('username')?.invalid &&
+        loginForm.get('username')?.touched) {
+        <div class="text-danger">
+          @if (loginForm.get('username')?.errors?.['required']) {
+          <small>Username is required.</small>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          class="form-control"
+        />
+        @if (loginForm.get('password')?.invalid &&
+        loginForm.get('password')?.touched) {
+        <div class="text-danger">
+          error
+          @if (loginForm.get('password')?.errors?.['required']) {
+          <small>Password is required.</small>
+          }
+        </div>
+        }
+      </div>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="loginForm.invalid"
+      >
+        Login
+      </button>
+    </form>
+
+    <!-- Register Link -->
+    <p class="mt-3">
+      Don't have an account?
+      <a class="btn btn-link" (click)="register()">Register here</a>
+    </p>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+.modal-content {
+  padding: 20px;
+}
+
+.modal-footer .btn {
+  margin-left: 10px;
+}
+
+input.form-control, select.form-control {
+  margin-bottom: 15px;
+}

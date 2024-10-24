@@ -1,0 +1,57 @@
+<div class="container">
+  <h2>Dashboard</h2>
+
+  @if (groups.length === 0) {
+    <div>No groups available</div>
+  } @else {
+    <h3>Available Groups</h3>
+    <ul class="list-group">
+      @for (group of groups; track $index) {
+        <li class="list-group-item">
+          <strong>{{ group.name }}</strong>
+          <ul class="list-group mt-2">
+            <li class="list-group-item">
+              <h5>Channels:</h5>
+              @if (group.channels.length === 0) {
+                <div>No channels available</div>
+              } @else {
+                <ul>
+                  @for (channel of group.channels; track $index) {
+                    <li>
+                      <span class="channel_name me-3 text-bold" (click)="goToChat(group._id, channel._id, channel.name)">{{ channel.name }}</span>
+                      <span *ngIf="user.roles && (user.roles.includes('superadmin') || user.roles.includes('groupadmin') )" class="channel-users">
+                        <ng-container *ngIf="channel.users.length>0">
+                          ( 
+                            <ng-container *ngFor="let user of channel.users; let i =index">
+                              {{user.username}}<ng-container *ngIf="i>channel.users.length-1">, </ng-container>
+                              
+                            </ng-container>
+                          )
+                        </ng-container>
+                        <ng-container *ngIf="channel.users.length==0">
+                          No users assigned
+                        </ng-container>
+                      </span>
+                    </li>
+                  }
+                </ul>
+              }
+            </li>
+            <li class="list-group-item">
+              <h5>Users:</h5>
+              @if (group.users.length === 0) {
+                <div>No users in this group</div>
+              } @else {
+                <ul>
+                  @for (user of group.users; track $index) {
+                    <li>{{ user.username }}</li>
+                  }
+                </ul>
+              }
+            </li>
+          </ul>
+        </li>
+      }
+    </ul>
+  }
+</div>

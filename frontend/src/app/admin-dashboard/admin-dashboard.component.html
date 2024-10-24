@@ -1,0 +1,437 @@
+<div>
+  <!-- Button to trigger the Create Group modal -->
+  <button
+    *ngIf="user.roles && user.roles.includes('superadmin')"
+    type="button"
+    class="btn btn-primary me-3 mb-3"
+    data-bs-toggle="modal"
+    data-bs-target="#createGroupModal"
+  >
+    Create Group
+  </button>
+
+  <!-- Button to trigger the Create Channel modal -->
+  <button
+    type="button"
+    class="btn btn-primary me-3 mb-3"
+    data-bs-toggle="modal"
+    data-bs-target="#createChannelModal"
+  >
+    Create Channel
+  </button>
+
+<!-- Button to trigger the Add User modal -->
+  <button
+    type="button"
+    class="btn btn-primary me-3 mb-3"
+    data-bs-toggle="modal"
+    data-bs-target="#addUserModal"
+  >
+    Add User to Group
+  </button>
+
+  
+  <button
+    type="button"
+    class="btn btn-primary mb-3 me-3"
+    data-bs-toggle="modal"
+    data-bs-target="#removeUserModal"
+  >
+    Remove User from Group
+  </button>
+
+<!-- Button to trigger the Add User to channel modal -->
+  <button
+    type="button"
+    class="btn btn-primary me-3 mb-3"
+    data-bs-toggle="modal"
+    data-bs-target="#addUserChannelModal"
+  >
+    Add User to Channel
+  </button>
+
+  
+  <button
+    type="button"
+    class="btn btn-primary mb-3"
+    data-bs-toggle="modal"
+    data-bs-target="#removeUserChannelModal"
+  >
+    Remove User from Channel
+  </button>
+</div>
+
+
+<!-- Add User to Group Modal -->
+<ng-container *ngIf="user.roles && user.roles.includes('superadmin')">
+  <app-create-user (userCreated)="getUsers();" />
+</ng-container>
+
+<!-- Create Group Modal -->
+<div
+  class="modal fade"
+  id="createGroupModal"
+  tabindex="-1"
+  aria-labelledby="createGroupModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createGroupModalLabel">Create Group</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <input
+          [(ngModel)]="groupName"
+          placeholder="Group Name"
+          class="form-control"
+        />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" (click)="createGroup()">
+          Create Group
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Channel Modal -->
+<div
+  class="modal fade"
+  id="createChannelModal"
+  tabindex="-1"
+  aria-labelledby="createChannelModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createChannelModalLabel">Create Channel</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <label for="groupId">Select Group</label>
+        <select [(ngModel)]="selectedGroupId" class="form-control">
+          <option *ngFor="let group of groups" [value]="group._id">
+            {{ group.name }}
+          </option>
+        </select>
+        <input
+          [(ngModel)]="channelName"
+          placeholder="Channel Name"
+          class="form-control mt-3"
+        />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" (click)="createChannel()">
+          Create Channel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="addUserModal"
+  tabindex="-1"
+  aria-labelledby="addUserModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addUserModalLabel">Add User to Group</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="addUserForm" (ngSubmit)="addUser()">
+          <div class="form-group">
+            <label for="groupId">Select Group</label>
+            <select
+              id="groupId"
+              formControlName="groupId"
+              class="form-control"
+            >
+              <option *ngFor="let group of groups" [value]="group._id">
+                {{ group.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group mt-3">
+            <label for="userId">Select User</label>
+            <select
+              id="userId"
+              formControlName="userId"
+              class="form-control"
+              (change)="onUserSelect($event)"
+            >
+              <option *ngFor="let user of users" [value]="user._id">
+                {{ user.username }}
+              </option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="addUserForm.invalid"
+          >
+            Add User
+          </button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div
+  class="modal fade"
+  id="removeUserModal"
+  tabindex="-1"
+  aria-labelledby="removeUserModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="removeUserModalLabel">Remove User from Group</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="removeUserForm" (ngSubmit)="removeUser()">
+          <div class="form-group">
+            <label for="groupId">Select Group</label>
+            <select
+              id="groupId"
+              formControlName="groupId"
+              class="form-control"
+            >
+              <option *ngFor="let group of groups" [value]="group._id">
+                {{ group.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group mt-3">
+            <label for="userIdremove">Select User</label>
+            <select
+              id="userIdremove"
+              formControlName="userIdremove"
+              class="form-control"
+              (change)="onUserSelect($event)"
+            >
+              <option *ngFor="let user of groupUsers" [value]="user._id">
+                {{ user.username }}
+              </option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="removeUserForm.invalid"
+          >
+            Remove User
+          </button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Add user to channel modal -->
+<div
+  class="modal fade"
+  id="addUserChannelModal"
+  tabindex="-1"
+  aria-labelledby="addUserModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addUserChannelModalLabel">Add User to Channel</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="addUserChannelForm" (ngSubmit)="addUserToChannel()">
+          <div class="form-group">
+            <label for="groupId">Select Group</label>
+            <select
+              id="groupId"
+              formControlName="groupId"
+              class="form-control"
+            >
+              <option *ngFor="let group of groups" [value]="group._id">
+                {{ group.name }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="groupId">Select Channel</label>
+            <select
+              id="groupId"
+              formControlName="channelId"
+              class="form-control"
+            >
+              <option *ngFor="let channel of groupChannels" [value]="channel._id">
+                {{ channel.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group mt-3">
+            <label for="userIdAddChannel">Select User</label>
+            <select
+              id="userIdAddChannel"
+              formControlName="userId"
+              class="form-control"
+              (change)="onUserSelect($event)"
+            >
+              <option *ngFor="let user of groupUsers" [value]="user._id">
+                {{ user.username }}
+              </option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+          >
+            Add User
+          </button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Remove user from channel modal -->
+<div
+  class="modal fade"
+  id="removeUserChannelModal"
+  tabindex="-1"
+  aria-labelledby="removeUserModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="removeUserChannelModalLabel">Remove User from Channel</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="removeUserChannelForm" (ngSubmit)="removeUserFromChannel()">
+          <div class="form-group">
+            <label for="groupId">Select Group</label>
+            <select
+              id="groupId"
+              formControlName="groupId"
+              class="form-control"
+            >
+              <option *ngFor="let group of groups" [value]="group._id">
+                {{ group.name }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="groupId">Select Channel</label>
+            <select
+              id="groupId"
+              formControlName="channelId"
+              class="form-control"
+            >
+              <option *ngFor="let channel of groupChannels" [value]="channel._id">
+                {{ channel.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group mt-3">
+            <label for="userIdAddChannel">Select User</label>
+            <select
+              id="userIdAddChannel"
+              formControlName="userId"
+              class="form-control"
+              (change)="onUserSelect($event)"
+            >
+              <option *ngFor="let user of channelUsers" [value]="user._id">
+                {{ user.username }}
+              </option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+          >
+            Remove User
+          </button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
